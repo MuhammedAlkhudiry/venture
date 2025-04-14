@@ -2,6 +2,8 @@
     <img src="logo.svg" />
 </p>
 
+This is a fork to fix this https://github.com/ksassnowski/venture/pull/107 
+
 Venture is a package to help you build and manage complex workflows of interdependent jobs using Laravel's queueing system.
 
 ## Installation
