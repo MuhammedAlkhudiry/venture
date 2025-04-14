@@ -1,5 +1,5 @@
 {
-    "name": "sassnowski/venture",
+    "name": "MuhammedAlkhudiry/venture",
     "description": "A package to manage complex workflows built on top of Laravel's queue.",
     "license": "MIT",
     "type": "library",
