@@ -26,7 +26,29 @@ class DefaultWorkflowState implements WorkflowState
 
     public function markJobAsFinished(WorkflowableJob $job): void
     {
+        Redis::funnel("workflow-{$this->workflow->getKey()}-finish")
+            ->limit(1)
+            ->block(30)
+            ->then(function () use ($job) {
+                DB::transaction(function () use ($job): void {
+                    /** @var Workflow $workflow */
+                    $workflow = $this->workflow
+                        ->newQuery()
+                        ->findOrFail($this->workflow->getKey());
+
+                    $workflow->newQuery()
+                        ->where('id', $workflow->getKey())
+                        ->update([
+                            'finished_jobs' => array_merge(
+                                $workflow->finished_jobs,
+                                [$job->getJobId()]
+                            ),
+                            'jobs_processed' => $workflow->jobs_processed + 1,
+                        ]);
+
                     $job->step()?->markAsFinished();
+                });
+            });  
     }
 
     public function markJobAsFailed(WorkflowableJob $job, \Throwable $exception): void
