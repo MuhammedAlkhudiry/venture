@@ -117,11 +117,10 @@ class DefaultWorkflowJobState implements WorkflowJobState
     private function allDependenciesHaveFinished(): bool
     {
         return \count(
-                \array_diff(
-                    $this->job->step()->getDependencies(),
-                    $this->job->workflow->jobs()->whereNotNull('finished_at')->get()->map(fn(WorkflowJob $job
-                    ) => $job->step()->getJobId())->toArray(),
-                ),
-            ) === 0;
+            \array_diff(
+                $this->job->step()->getDependencies(),
+                $this->job->workflow->finished_jobs,
+            ),
+        ) === 0;
     }
 }
